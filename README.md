@@ -2,6 +2,15 @@
 
 An implementation of AKS Primality Test in Swift. 
 
+## Build
+
+```bash
+git clone https://github.com/fh2ctm/aks.git
+cd aks
+swift build -c release
+swift build --show-bin-path
+```
+
 ## Usage
 
 To test whether a number is prime: 
