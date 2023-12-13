@@ -14,10 +14,6 @@ To find primes in a range:
 aks 1 200
 ```
 
-## Issues
-
-Large numbers might cause arithmetic overflow since modular multiplication is not optimized. 
-
 ## References
 
 The implementation follows the original paper: 

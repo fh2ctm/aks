@@ -13,10 +13,10 @@ import Foundation
 import Numerics
 
 /// Compute the positive greatest commmon divisor using Euclidean algorithm.
-func gcd(_ a: Int, _ b: Int) -> Int {
+func gcd(_ a: UInt, _ b: UInt) -> UInt {
     var y = b
     var x = a
-    var t = 0
+    var t: UInt = 0
     while y != 0 {
         t = y
         y = x % y
@@ -26,14 +26,14 @@ func gcd(_ a: Int, _ b: Int) -> Int {
 }
 
 /// Check whether two numbers are coprime.
-func areCoprime(_ a: Int, _ b: Int) -> Bool {
+func areCoprime(_ a: UInt, _ b: UInt) -> Bool {
     return gcd(a, b) == 1
 }
 
-extension Int {
+extension UInt {
     
     /// Check whether the number is coprime to c.
-    func isCoprime(to c: Int) -> Bool {
+    func isCoprime(to c: UInt) -> Bool {
         return areCoprime(self, c)
     }
     
@@ -52,9 +52,9 @@ extension Int {
 }
 
 /// Euler's Phi function
-func eulerPhi(_ n: Int) -> Int {
+func eulerPhi(_ n: UInt) -> UInt {
     guard n > 0 else { return 0 }
-    var foundCoprimes = 0
+    var foundCoprimes: UInt = 0
     for i in 1...n {
         if n.isCoprime(to: i) { foundCoprimes += 1 }
     }

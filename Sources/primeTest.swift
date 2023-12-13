@@ -13,7 +13,7 @@ import Foundation
 import ArgumentParser
 
 /// Use AKS to determine if the given integer is prime.
-private func testPrime(_ n: Int) -> Bool {
+private func testPrime(_ n: UInt) -> Bool {
     
     // Check smaller numbers.
     guard n > 1 else { return false }
@@ -24,18 +24,18 @@ private func testPrime(_ n: Int) -> Bool {
     
     // Find order r.
     var r = 2
-    Z.setMod(to: r)
+    Z.setMod(to: UInt(r))
     var nRep = Z(n)
     while nRep.order <= Int(pow(log2(Double(n)), 2.0)) {
         r += 1
-        Z.setMod(to: r)
+        Z.setMod(to: UInt(r))
         nRep = Z(n)
     }
     if DEBUG { print("Found r=\(r). ") }
     
     // Check GCD of numbers less than r with n.
     for a in 2...r {
-        if (2..<n).contains(gcd(a,n)) { return false }
+        if (2..<n).contains(gcd(UInt(a),n)) { return false }
     }
     if DEBUG { print("All numbers less than r=\(r) are coprime to n=\(n). ") }
     
@@ -46,11 +46,11 @@ private func testPrime(_ n: Int) -> Bool {
     // Polynomial comparisons.
     Z.setMod(to: n)
     Poly.setExpMod(to: r)
-    let upperBound = Int(floor(sqrt(Double(eulerPhi(r))) * log2(Double(n))))
+    let upperBound = Int(floor(sqrt(Double(eulerPhi(UInt(r)))) * log2(Double(n))))
     if DEBUG { print("Checking a up to \(upperBound)...") }
     for a in 1...upperBound {
-        let lhs = Poly([0:Z(a), 1:Z.multId()]).toThe(exponent: n)   // (a + x)^n
-        let rhs = Poly([0:Z(a)]) + Poly([(n % r):Z.multId()])       // a + x^n
+        let lhs = Poly([0:Z(UInt(a)), 1:Z.multId()]).toThe(exponent: Int(n))   // (a + x)^n
+        let rhs = Poly([0:Z(UInt(a))]) + Poly([(Int(n) % r):Z.multId()])       // a + x^n
         if lhs != rhs { return false }
         if DEBUG { print("Passed a=\(a). ") }
     }
@@ -59,7 +59,7 @@ private func testPrime(_ n: Int) -> Bool {
     
 }
 
-extension Int {
+extension UInt {
     
     /// Check whether current number is prime using AKS.
     var isPrime: Bool { return testPrime(self) }
@@ -67,7 +67,7 @@ extension Int {
 }
 
 /// Test if n is prime and print results.
-func testOnePrime(_ n: Int) {
+func testOnePrime(_ n: UInt) {
     if n.isPrime {
         print("[INFO] \(n) is prime. ")
     } else {
@@ -76,7 +76,7 @@ func testOnePrime(_ n: Int) {
 }
 
 /// Find primes within a range and print results.
-func findPrimes(between a: Int, and b: Int) {
+func findPrimes(between a: UInt, and b: UInt) {
     assert (a < b)
     print("Looking for primes between \(a) and \(b): ")
     var primeCounter = 0
@@ -91,13 +91,14 @@ func findPrimes(between a: Int, and b: Int) {
 var DEBUG = false
 
 /// A Command Line Interface Implementation.
-@main struct AKS: ParsableCommand {
+@main
+struct AKS: ParsableCommand {
     
     @Argument(help: "The number that you want to test, or the lower bound of a range you want to find primes in. ")
-    var a: Int
+    var a: UInt
     
     @Argument(help: "The upper bound of a range you want to find primes in. ")
-    var b: Int?
+    var b: UInt?
     
     @Flag(help: "If enabled, prints out logs from AKS computation. ")
     var verbose: Bool = false

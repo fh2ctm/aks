@@ -29,19 +29,18 @@ struct Z: Equatable, CustomStringConvertible {
     // [MARK] Core Properties and Methods
     
     /// Current modulus.
-    static var modulus: Int = 7
+    static var modulus: UInt = 7
     
     /// Set static modulus to n.
-    static func setMod(to n: Int) {
-        assert (n > 0)
+    static func setMod(to n: UInt) {
         Self.modulus = n
     }
     
     /// An integer representation of element in ring.
-    var repr: Int
+    var repr: UInt
     
     /// Creates a ring element.
-    init (_ n: Int) {
+    init (_ n: UInt) {
         self.repr = n % Self.modulus
     }
     
@@ -74,7 +73,7 @@ struct Z: Equatable, CustomStringConvertible {
     
     /// Equivalence relation.
     static func == (lhs: Z, rhs: Z) -> Bool {
-        return (lhs.repr - rhs.repr) % Self.modulus == 0
+        return (lhs - rhs).repr == 0
     }
     
     /// Non-equivalence relation.
@@ -84,7 +83,12 @@ struct Z: Equatable, CustomStringConvertible {
     
     /// Addition.
     static func + (lhs: Z, rhs: Z) -> Self {
-        Self.init(lhs.repr + rhs.repr)
+        let (partialVal, didOverflow) = lhs.repr.addingReportingOverflow(rhs.repr)
+        if didOverflow {
+            return Self.init(UInt.max % Self.modulus + 1 + partialVal % Self.modulus)
+        } else {
+            return Self.init(partialVal)
+        }
     }
     
     /// Addition assignment.
@@ -94,7 +98,7 @@ struct Z: Equatable, CustomStringConvertible {
     
     /// Subtraction.
     static func - (lhs: Z, rhs: Z) -> Self {
-        Self.init(lhs.repr - rhs.repr)
+        return lhs + rhs.negated
     }
     
     /// Subtraction assignment.
@@ -104,6 +108,13 @@ struct Z: Equatable, CustomStringConvertible {
     
     /// Multiplication using current modulus.
     static func * (lhs: Z, rhs: Z) -> Self {
+        let maxRoot = UInt(floor(sqrt(Double(UInt.max))))
+        guard lhs.repr < maxRoot else {
+            return Self.init(maxRoot) * rhs + Self.init(lhs.repr-maxRoot) * rhs
+        }
+        guard rhs.repr < maxRoot else {
+            return Self.init(maxRoot) * lhs + Self.init(rhs.repr-maxRoot) * lhs
+        }
         return Self.init(lhs.repr * rhs.repr)
     }
     
@@ -116,7 +127,7 @@ struct Z: Equatable, CustomStringConvertible {
     
     /// The additive inverse of the current element.
     var negated: Z {
-        return Z(-self.repr)
+        return Z(Self.modulus - self.repr)
     }
     
     /// Current element squared.
@@ -125,7 +136,7 @@ struct Z: Equatable, CustomStringConvertible {
     }
     
     /// Exponentiation with integer exponent.
-    func toThe(exponent e: Int) -> Self {
+    func toThe(exponent e: UInt) -> Self {
         if e < 1 {
             return Self.multId()
         } else {
@@ -144,9 +155,9 @@ struct Z: Equatable, CustomStringConvertible {
     }
     
     /// Computes order of element in current ring.
-    var order: Int {
+    var order: UInt {
         guard self != Self.addId() else { return 0 }
-        var e = 1
+        var e: UInt = 1
         var current = self
         let multId = Self.multId()
         while current != multId && e <= Self.modulus {
