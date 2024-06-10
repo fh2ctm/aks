@@ -8,6 +8,11 @@ An implementation of AKS Primality Test in Swift.
 git clone https://github.com/fh2ctm/aks.git
 cd aks
 swift build -c release
+```
+
+To find path to built binary,
+
+```sh
 swift build --show-bin-path
 ```
 
