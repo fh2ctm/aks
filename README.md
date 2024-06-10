@@ -27,4 +27,4 @@ aks 1 200
 
 The implementation follows the original paper: 
 
-> Agrawal, M., Kayal, N., &amp; Saxena, N. (2004). Primes is in $P$. *Annals of Mathematics*, 160(2), 781–793. https://doi.org/10.4007/annals.2004.160.781 
+> Agrawal, M., Kayal, N., &amp; Saxena, N. (2004). Primes is in P. *Annals of Mathematics*, 160(2), 781–793. https://doi.org/10.4007/annals.2004.160.781 
