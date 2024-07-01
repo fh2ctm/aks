@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "AKS",
+    name: "aks",
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         .package(url: "https://github.com/apple/swift-numerics.git", from: "1.0.2"),
